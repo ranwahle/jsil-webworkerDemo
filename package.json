@@ -1,0 +1,14 @@
+{
+  "name": "webworkerdemo",
+  "version": "1.0.0",
+  "description": "Demo for webworker tobe presented at JS-IL meetup",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ran Wahle",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.5.0"
+  }
+}
