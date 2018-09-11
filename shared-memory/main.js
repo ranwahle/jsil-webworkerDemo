@@ -1,25 +1,29 @@
 class TasksHandler {
 
     constructor(numOfTasks, numOfWorkers) {
-        this.numOftasks = numOfTasks;
-        this.numOfWorkers = numOfWorkers;
+        this.numOftasks = +numOfTasks;
+        this.numOfWorkers = +numOfWorkers;
         if (this.numOfWorkers > this.numOftasks) {
             this.numOfWorkers = this.numOftasks;
         }
 
     }
 
+
     checkTaskEnd(resolve) {
-        const unterminatedWorkers = this.workers.filter(workerObj => workerObj.state !== 'terminated');
-        if (unterminatedWorkers.length === 0) {
+        const unfinishedTasks = this.tasksdArray.filter(item => item === 0)
+        if (unfinishedTasks.length === 0) {
             this.end = new Date();
             resolve(this.end - this.start)
+        } else {
+            console.log('array', this.tasksdArray)
         }
     }
+
     assignTasks(resolve) {
         const tasksPerWorker = Math.round(this.numOftasks / this.numOfWorkers);
-        for (let i = 0; i < tasksPerWorker; i++) {
-            this.assignTasksToWorkers(i);
+        for (let i = 0; i < this.numOftasks; i += (tasksPerWorker)) {
+            this.assignTasksToWorkers(i, i + tasksPerWorker);
             this.handleTasksCompletion(resolve);
 
         }
@@ -28,33 +32,30 @@ class TasksHandler {
     handleTasksCompletion(resolve) {
         this.workers.forEach((workerObj) => {
             workerObj.worker.onmessage = message => {
-                const data = message.data;
-                if (data && data.handled) {
-                    const handledTask = workerObj.tasks.find(task => task.taskNumber === data.taskNumber);
-                    if (handledTask) {
-                        handledTask.handled = true;
-                        const unfinishedTasks = workerObj.tasks.filter(task => !task.handled);
-                        if (unfinishedTasks.length === 0) {
-                            console.log('Worker terminated')
-                            workerObj.worker.terminate();
-                            workerObj.state = 'terminated';
-                            this.checkTaskEnd(resolve);
-                        }
-                    }
-                }
+                workerObj.worker.terminate();
+                this.checkTaskEnd(resolve);
+
             }
         })
     }
 
-    assignTasksToWorkers(i) {
+    assignTasksToWorkers(startIndex, endIndex) {
         this.workers.forEach((workerObj) => {
-            const taskObj = {taskNumber: i};
+            workerObj.worker.postMessage(this.sharedBuffer)
+            const taskObj = {startIndex, endIndex};
             workerObj.tasks.push(taskObj);
             workerObj.worker.postMessage(taskObj)
         })
     }
 
     handleTasks() {
+        this.sharedBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * this.numOftasks)
+        this.tasksdArray = new Int32Array(this.sharedBuffer)
+
+
+        for (let i = 0; i < length; i++) this.tasksdArray[i] = 0;
+
+
         return new Promise((resolve, reject) => {
             this.start = new Date();
             if (!this.numOfWorkers) {
@@ -79,13 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const numOfTasks = document.querySelector('#numOfTasks');
     const numOfWorkers = document.querySelector('#numOfWorkers');
     const btnHandleTasks = document.querySelector('#btnHandleTasks');
-    const durationDiv =  document.querySelector('#durationDiv');
+    const durationDiv = document.querySelector('#durationDiv');
     btnHandleTasks.addEventListener('click', () => {
             const tasksHandler = new TasksHandler(numOfTasks.value, numOfWorkers.value);
             durationDiv.textContent = 'Wait...';
             tasksHandler.handleTasks().then(res => {
                 console.log('duration', res)
-              durationDiv.textContent = `Duration: ${res} ms`
+                durationDiv.textContent = `Duration: ${res} ms`
             });
         }
     )

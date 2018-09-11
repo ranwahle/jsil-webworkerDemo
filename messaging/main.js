@@ -9,6 +9,8 @@ class TasksHandler {
 
     }
 
+
+
     checkTaskEnd(resolve) {
         const unterminatedWorkers = this.workers.filter(workerObj => workerObj.state !== 'terminated');
         if (unterminatedWorkers.length === 0) {

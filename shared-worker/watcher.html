@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shared worker - Just watching</title>
+</head>
+<body>
+<div id="index"></div>
+</body>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const worker = new SharedWorker('shared-worker.js');
+        worker.port.onmessage = message => {
+            console.log("message data", message.data)
+            if (message.data.index !== undefined) {
+                document.querySelector('#index').textContent = `Calculating : ${message.data.index}`
+            } else if (message.data.result !== undefined) {
+                document.querySelector('#index').textContent = `Result : ${message.data.result}`
+            } else {
+                document.querySelector('#index').textContent = `Waiting...`
+
+            }
+        }
+        setInterval(() =>
+            worker.port.postMessage('send state please'), 100)
+    })
+</script>
+</html>
