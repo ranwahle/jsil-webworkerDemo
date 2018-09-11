@@ -1,5 +1,9 @@
 onmessage = (message) => {
 
+    for (let i = 0; i < 1000; i++) {
 
-    setTimeout(() => postMessage({...message.data, handled: true}), 1000)
+    }
+    postMessage({...message.data, handled: true})
+
+    //setTimeout(() => postMessage({...message.data, handled: true}), 1000)
 }
