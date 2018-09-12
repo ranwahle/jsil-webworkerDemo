@@ -6,11 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const worker = new SharedWorker('shared-worker.js');
 
-        worker.port.postMessage('a message')
-        worker.port.onmessage = message => {
-            // something with message
-        }
-
+        worker.onerror = err => console.error('error on worker', err)
         worker.port.postMessage({index: +fibunatchiIndex.value})
         worker.port.onmessage = message => {
             console.log("message data", message.data)

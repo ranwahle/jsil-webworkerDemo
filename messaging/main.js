@@ -57,7 +57,7 @@ class TasksHandler {
     }
 
     handleTasks() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.start = new Date();
             if (!this.numOfWorkers) {
                 console.error('Workers are not set')
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHandleTasks = document.querySelector('#btnHandleTasks');
     const durationDiv =  document.querySelector('#durationDiv');
     btnHandleTasks.addEventListener('click', () => {
-            const tasksHandler = new TasksHandler(numOfTasks.value, numOfWorkers.value);
+            const tasksHandler = new TasksHandler(+numOfTasks.value, +numOfWorkers.value);
             durationDiv.textContent = 'Wait...';
             tasksHandler.handleTasks().then(res => {
                 console.log('duration', res)

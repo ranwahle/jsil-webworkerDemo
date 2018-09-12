@@ -9,9 +9,10 @@
 </body>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', () => {
-        const worker = new SharedWorker('shared-worker.js');
+        const worker = new SharedWorker('./shared-worker.js');
+        worker.onerror = err => console.error('error on worker', err)
         worker.port.onmessage = message => {
-            console.log("message data", message.data)
+            console.log('message data', message.data)
             if (message.data.index !== undefined) {
                 document.querySelector('#index').textContent = `Calculating : ${message.data.index}`
             } else if (message.data.result !== undefined) {
@@ -22,7 +23,7 @@
             }
         }
         setInterval(() =>
-            worker.port.postMessage('send state please'), 100)
+            worker.port.postMessage({index: 0}), 100)
     })
 </script>
 </html>

@@ -1,37 +1,36 @@
-const state = {};
-
-const SQRT_OF_FIVE  = math.sqrt(5);
+const SQRT_OF_FIVE = Math.sqrt(5);
 const phi = (SQRT_OF_FIVE + 1) / 2;
 
-
+let state = {};
 function calcFibunatcci(index) {
-    state.index = index;
     return Math.round((Math.pow(phi, index) - Math.pow((-1) * phi, (-1) * index)) / SQRT_OF_FIVE);
 
 }
 
+ports = [];
 
-self.addEventListener('connect', function (e) {
+self.addEventListener('connect', (e) => {
+
     const port = e.ports[0];
+    ports.push(port)
+    console.log('connect')
     port.onmessage = (message) => {
-
+        port.postMessage({...self.state});
         const fibunatchiIndex = message.data.index;
         if (fibunatchiIndex) {
             state.result = 'Waiting';
             port.postMessage({result: 'waiting'});
             const result = calcFibunatcci(fibunatchiIndex)
+            state.result = result;
             setTimeout(() => {
-                state.result = result, 15000
+                ports.forEach(tempPort => tempPort.postMessage({result: result}))
                 port.postMessage({result: result});
-            });
+
+            }, 5000);
 
         } else {
-            if (state.index > 0  && !state.result) {
-                console.log('message date', message.data)
-                port.postMessage({index: state.index});
-            } else {
-                port.postMessage({result: state.result});
-            }
+        //    port.postMessage({...self.state});
+
         }
     };
 
