@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Shared worker - Just watching</title>
+    <link rel="stylesheet" href="/assets/main.css">
 </head>
 <body>
 <div id="index"></div>
@@ -22,8 +23,8 @@
 
             }
         }
-        setInterval(() =>
-            worker.port.postMessage({index: 0}), 100)
+       // setInterval(() =>
+       //     worker.port.postMessage({index: 0}), 100)
     })
 </script>
 </html>
