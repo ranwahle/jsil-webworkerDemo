@@ -3,7 +3,7 @@
     2. Run http-server from the project's root
     
 
-##This dem includes
+##This demo includes
     1. Sinple web worker 
     2. Shared memory with SharedArrayBuffer  
     3. SharedWorker
